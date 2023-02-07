@@ -7,11 +7,7 @@ import re
 def main():
     sales_csv = get_sales_csv()
     orders_dir = create_orders_dir(sales_csv)
-    
     process_sales_data(sales_csv, orders_dir)
-  
-  
-   
 
 # Get path of sales data CSV file from the command line
 def get_sales_csv():
@@ -44,26 +40,6 @@ def create_orders_dir(sales_csv):
         os.makedirs(orders_dir_path)
 
     return orders_dir_path
- 
- 
-
-# Split the sales data into individual orders and save to Excel sheets
-def create_orders_dir(sales_csv):
-    # Get directory in which sales data CSV file resides
-    sales_dir = os.path.dirname(sales_csv)
-    # calling the functions 
-    set_column_widths(sales_csv)
-
-    # Determine the name and path of the directory to hold the order data files
-    todays_date = datetime.date.today().isoformat()
-    orders_dir_name = f'Orders_{todays_date}'
-    orders_dir_path = os.path.join(sales_dir, orders_dir_name)
-
-    # Create the order directory if it does not already exist
-    if not os.path.isdir(orders_dir_path):
-        os.makedirs(orders_dir_path)
-
-    return orders_dir_path
 
 # Split the sales data into individual orders and save to Excel sheets
 def process_sales_data(sales_csv, orders_dir):
@@ -72,9 +48,11 @@ def process_sales_data(sales_csv, orders_dir):
 
     # Insert a new "TOTAL PRICE" column into the DataFrame
     sales_df.insert(7, 'TOTAL PRICE', sales_df['ITEM QUANTITY'] * sales_df['ITEM PRICE'])
-   # Format the "ITEM PRICE" and "TOTAL PRICE" columns as money
+    
+    # Turn numbers into money 
     sales_df['ITEM PRICE'] = sales_df['ITEM PRICE'].map('${:,.2f}'.format)
     sales_df['TOTAL PRICE'] = sales_df['TOTAL PRICE'].map('${:,.2f}'.format)
+
     # Remove columns from the DataFrame that are not needed
     sales_df.drop(columns=['ADDRESS', 'CITY', 'STATE', 'POSTAL CODE', 'COUNTRY'], inplace=True)
 
@@ -101,12 +79,10 @@ def process_sales_data(sales_csv, orders_dir):
         # Export the data to an Excel sheet
         sheet_name = f'Order {order_id}'
         order_df.to_excel(order_file_path, index=False, sheet_name=sheet_name)
-    
-def set_column_widths(sales_csv):
-   
-   return
- 
+
 
 
 if __name__ == '__main__':
     main()
+ 
+
